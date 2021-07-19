@@ -2,7 +2,7 @@ from sklearn.preprocessing import OneHotEncoder
 import math 
 from gensim.models import Word2Vec
 
-class WordTransformToVectorByOnehot:
+class OneHotEncoder_:
     def __init__(self):
         self.onehot = None 
     def fit_transform(self, sentence: list) -> list: # 形態素解析の形状で渡す
@@ -23,7 +23,7 @@ class WordTransformToVectorByOnehot:
         else:
             raise NotImplementedError
 
-class WordTransformToVector:
+class Word2Vec_:
     def __init__(self, vocab_size=128, min_count=1, window=5, workers=1, seed=123):
         self.model = None 
         self.vocab_size = vocab_size 
@@ -39,11 +39,11 @@ class WordTransformToVector:
             h += ord(c) * math.factorial(n-idx)
         return h
 
-    def train(self, sentence: list):
+    def fit(self, sentence: list):
         self.model = Word2Vec(sentence, size=self.vocab_size, min_count=self.min_count, window=self.window, seed=self.seed, hashfxn=self._hash)
         print(self.model)
 
-    def embedding_word(self, word: str):
+    def transform_word(self, word: str):
         """
         Returns a vector on a word-by-word basis
         """
@@ -52,7 +52,7 @@ class WordTransformToVector:
         else:
             raise NotImplementedError
 
-    def embedding_sentence(self, sentence: list):
+    def transfrom_sentence(self, sentence: list):
         """
         Returns a vector for every sentence
         """
