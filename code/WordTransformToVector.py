@@ -1,6 +1,8 @@
 from sklearn.preprocessing import OneHotEncoder
 import math 
 from gensim.models import Word2Vec
+from sklearn.metrics.pairwise import cosine_similarity
+import numpy as np 
 
 class OneHotEncoder_:
     def __init__(self):
@@ -40,7 +42,12 @@ class Word2Vec_:
         return h
 
     def fit(self, sentence: list):
-        self.model = Word2Vec(sentence, size=self.vocab_size, min_count=self.min_count, window=self.window, seed=self.seed, hashfxn=self._hash)
+        self.model = Word2Vec(sentence, 
+                              size=self.vocab_size,
+                              min_count=self.min_count,
+                              window=self.window,
+                              seed=self.seed,
+                              hashfxn=self._hash)
         print(self.model)
 
     def transform_word(self, word: str):
@@ -78,3 +85,18 @@ class Word2Vec_:
             return self.model.wv.similar_by_word(word, topn=topn)
         else:
             raise NotImplementedError
+    def vocabulary_(self):
+        return self.model.wv.vocab.keys()
+
+    def augment_by_normal_noise(self, word: str, scale_rate=0.1) -> list:
+        """
+        指定された単語ベクトルに微小なノイズを加えてベクトルを作成します
+        scale_rateを変化させることでノイズの分散を変更します
+        """
+        v = self.model.wv[word]
+        noise = np.random.normal(0.0, scale=scale_rate*v.std(), size=v.shape)
+        cos = cosine_similarity([v], [noise+v])
+        print(f"Cosine Similar: {cos}")
+        print(f"restored_word1: {self.similar_by_vector(v, topn=1)}")
+        print(f"restored_word1: {self.similar_by_vector(noise+v, topn=1)}")
+        return noise+v
