@@ -1,5 +1,6 @@
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from gensim.models.doc2vec import Doc2Vec, TaggedDocument
+import numpy as np 
 from pprint import pprint 
 class CountVectorizer_:
     def __init__(self):
