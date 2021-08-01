@@ -37,7 +37,7 @@ class WordToTensorLoader:
             vocab_[t] += 1 
       self.vocab_size = len(vocab_)
       self.word2index = word2index
-      self.max_len = max_len + 1
+      self.max_len = max_len 
 
   def _create_inputs_ids(self, data: list):
     # DNN 入力データ作成
