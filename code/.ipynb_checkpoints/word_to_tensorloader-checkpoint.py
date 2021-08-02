@@ -1,3 +1,5 @@
+# !pip install -q janome 
+# from janome.tokenize import Tokenzier
 import re 
 import torch 
 from torch.utils.data import DataLoader 
@@ -35,11 +37,11 @@ class WordToTensorLoader:
             word2index[t] = len(word2index) 
           else:
             vocab_[t] += 1 
-      self.vocab_size = len(vocab_)
+      self.vocab_size = len(vocab_) + 3
       self.word2index = word2index
-      self.max_len = max_len + 1
+      self.max_len = max_len 
 
-  def _create_inputs_ids(self, data: list):
+  def _create_inputs_ids(self, data: list, limit_length: int):
     # DNN 入力データ作成
     inputs = []
     for d in data:
@@ -55,18 +57,30 @@ class WordToTensorLoader:
           idx = self.word2index["<unk>"]
         dummy.append(idx)
       # max_len から文章の最大トークンの分だけpaddingで埋める
+      # paddingを反転させる場合はコメントアウトを入れ替える
       if self.max_len >= len(dummy):
         for i in range(self.max_len - len(dummy)):
-          dummy.insert(0, 0) # この実装は文章の先頭からpaddingで埋めている
+          #####################################################################
+          # dummy.insert(0, 0) # この実装は文章の先頭からpaddingで埋めている
+          dummy.append(0) # この実装では文章の末尾にpaddingで埋める
+          #####################################################################
       else:
-        dummy = dummy[:self.max_len]
-      dummy.append(self.word2index["<cls>"]) # 末端に<cls>の追加
-      sentence2tensor["input_ids"] = torch.tensor(dummy)
+        #######################################################################
+        # dummy = dummy[:self.max_len]
+        dummy = dummy[self.max_len:]
+        #######################################################################
+      #########################################################################
+      # dummy.append(self.word2index["<cls>"]) # 末端に<cls>の追加
+      dummy.insert(0, self.word2index["<cls>"]) # 先頭に<cls>の追加
+      #########################################################################
+      if limit_length != 0:
+        dummy = dummy[:limit_length]
+      sentence2tensor["input_ids"] = torch.tensor(dummy, dtype=torch.long)
       sentence2tensor["labels"] = label2tensor.item()
       inputs.append(sentence2tensor)
     return inputs 
 
-  def transform(self, data: list, loader: bool=True, batch_size: int=32, train: bool=True):
+  def transform(self, data: list, loader: bool=True, batch_size: int=32, train: bool=True, limit_length: int=0):
     """
     data = [
       {"text": "", "label": 1},
@@ -84,7 +98,7 @@ class WordToTensorLoader:
       self._training_vocab(data)
     else:
       loader = False 
-    inputs = self._create_inputs_ids(data)
+    inputs = self._create_inputs_ids(data, limit_length)
     # テストコード
     assert inputs[0]["input_ids"].size()[0] == inputs[1]["input_ids"].size()[0]
     # DataLoaderの作成
