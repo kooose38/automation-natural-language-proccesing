@@ -29,7 +29,7 @@ class MakeDataLoader(DataLoader):
     for text, label in zip(text_list, labels_list):
       if self.language == "jp":
         text = PreProcessingTEXT()._jp_preprocessing(text)
-      elif self.lauguage == "en":
+      elif self.language == "en":
         text = PreProcessingTEXT()._en_preprocessing(text)
       encoding = self.tokenizer(text,
                            padding=padding,
