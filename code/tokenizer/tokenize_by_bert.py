@@ -2,6 +2,7 @@
 from transformers import BertTokenizer, BertJapaneseTokenizer 
 from typing import Any 
 from bert_model_name import ModelNameByBertTokenizer
+import torch 
 
 class BasicToken:
 
