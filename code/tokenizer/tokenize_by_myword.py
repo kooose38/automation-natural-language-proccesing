@@ -99,7 +99,7 @@ class WordToTensorLoader:
     else:
       assert inputs[a]["input_ids"].size()[0] == limit_length
 
-  def transform(self, data: List[ Dict[str, str, str, int]], loader: bool=True, batch_size: int=32, train: bool=True, limit_length: int=0):
+  def transform(self, data: List[ Dict[str, int]], loader: bool=True, batch_size: int=32, train: bool=True, limit_length: int=0):
     """
     data = [
       {"text": "hello world 1", "label": 1},
