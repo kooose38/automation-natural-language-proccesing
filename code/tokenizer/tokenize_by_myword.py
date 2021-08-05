@@ -159,7 +159,7 @@ class EnWordToTensor(WordToTensorLoader):
     return text.strip().split()
 
   def _preprocessing(self, text: str) -> str:
-    text = PreProcessingTEXT()._en_preprocessinf(text)
+    text = PreProcessingTEXT()._en_preprocessing(text)
     return text 
 
 class JpWordToTensor(WordToTensorLoader):
